@@ -1,37 +1,48 @@
 const express = require('express');
-const req = require('express/lib/request');
-const mongoose = require('mongoose');
-const { Blog } = require('./model/letter');
+const Letter = require('./model/letter');
 
 const app = express();
 const port = 5000;
 
+const parseRawBody = (req, res, next) => {
+  req.setEncoding('utf8');
+  req.rawBody = '';
+  req.on('data', (chunk) => {
+    req.rawBody += chunk;
+  });
+  req.on('end', () => {
+    next();
+  });
+}
+
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
+app.use(parseRawBody);
 
-app.get('/', (req, res) => {
-  res.send('Hello World!')
+function isJson(str) {
+  try {
+      JSON.parse(str);
+  } catch (e) {
+      return false;
+  }
+  return true;
+}
+
+app.post('/test', (req, res) => {  
+  let check = isJson(req.rawBody);  
+
+  if (!check) return res.status(400).send("Bad request");
+
+  req.rawBody = JSON.parse(req.rawBody);  
+  res.send(req.rawBody);  
+});
+
+app.listen(port, () => {
+  console.log(`The server is listening on port ${port}`)
 })
 
-app.post('/text', (req, res) => {
 
-  const blogOne = new Blog ({
-    title: req.body.title,
-    author: req.body.author
-  })
-
-  res.json(blogOne);
-
-  // let text = req.body;
-  // console.log(req.body);
-  // let result = JSON.stringify(text);
-  // res.send(result);
-
-})
-
-
-
-// // convert this object into a string to be stored in local storage
+// convert this object into a string to be stored in local storage
 
 // const studentObjToString = JSON.stringify(student)
 
@@ -47,10 +58,11 @@ app.post('/text', (req, res) => {
 
 // console.log(toJSONStudent.age); //now u can access the property of the JSON;
 
-app.listen(port, () => {
-  console.log(`The server is listening on port ${port}`)
-})
-
 // let text = "ther brothers that sold some cups of the donor are plenty over here";
 // let result = JSON.stringify(text);
 // console.log(result);
+
+// let text = req.body;
+// console.log(req.body);
+// let result = JSON.stringify(text);
+// res.send(result);
