@@ -8,8 +8,19 @@
     <title>JSON conveter</title>
 </head>
 <body>
-    <div class="container">
-        <h1>This is the landing page</h1>
+    <div class="container-lg">
+        <h1>Welcome to the JSON converter</h1>
+
+        <div class="p-5">
+            <form action="/test" method="POST">
+                <div class="mb-3 form-group">
+                    <label for="">Paste String Here</label>
+                    <input type="text" placeholder="paste string to be converted to JSON">
+                </div>
+                
+                <button type="submit" class="btn btn-outline-info btn-lg">Convert</button>
+            </form>
+        </div>
     </div>
 </body>
 </html>

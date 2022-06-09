@@ -15,6 +15,9 @@ const parseRawBody = (req, res, next) => {
   });
 }
 
+app.set("view engine", "ejs");
+app.engine("html", require("ejs").renderFile);
+
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 app.use(parseRawBody);
@@ -27,6 +30,10 @@ function isJson(str) {
   }
   return true;
 }
+
+app.get("/home", (req, res) => {
+  res.render("landing");
+})
 
 app.post('/test', (req, res) => {  
   let check = isJson(req.rawBody);  
