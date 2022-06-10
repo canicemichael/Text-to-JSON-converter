@@ -12,10 +12,18 @@
         <div>
             <h2>Upload a file containing strings to be converted to json</h2>
             <form action="/show" method="POST" enctype="multipart/form-data">
-                <input type="file" name="file" required/>
+                <input type="file" name="file" id="fileInput" multiple onchange="showname()" required/>
                 <input class="btn btn-primary" type="submit" value="Upload" />
             </form>
         </div>
     </div>
+    <script>
+        function showname(){
+            // copy the name of file
+            let name = document.getElementById('fileInput');
+            navigator.clipboard.writeText(name.files.item(0).name);
+            alert('Selected file: ' + name.files.item(0).name);
+        }
+    </script>
 </body>
 </html>

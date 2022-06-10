@@ -2,12 +2,11 @@ const express = require('express');
 const upload = require('express-fileupload');
 const http = require('http');
 const fs = require('fs');
+const ejs = require('ejs');
 
 const app = express();
 const server = http.createServer(app);
 const port = 5000;
-
-let filename;
 
 const parseRawBody = (req, res, next) => {
   req.setEncoding('utf8');
@@ -75,7 +74,8 @@ app.post("/show", async (req, res) => {
     console.log(req.files);
 
     let file = req.files.file;
-    filename = file.name;
+    console.log('type of ' + typeof(file));
+    let filename = file.name;
     
     await file.mv('./uploads/' + filename, function (err){
             if (err) {
@@ -84,11 +84,11 @@ app.post("/show", async (req, res) => {
               // res.send("Fileupload");
             }
           })
-
     res.redirect("/convert");
   } else {
     res.send("No file was found");
   }
+  
 })
 
 app.get('/convert', (req, res) => {
@@ -107,15 +107,15 @@ app.post("/convert", (req, res) => {
     })
 })
 
-app.post('/test', (req, res) => {  
-  console.log(req.rawBody.words);
-  let check = isJson(req.rawBody);  
+// app.post('/test', (req, res) => {  
+//   console.log(req.rawBody.words);
+//   let check = isJson(req.rawBody);  
 
-  if (!check) return res.status(400).send("Bad request");
+//   if (!check) return res.status(400).send("Bad request");
 
-  req.rawBody = JSON.parse(req.rawBody);  
-  res.send(req.rawBody);  
-});
+//   req.rawBody = JSON.parse(req.rawBody);  
+//   res.send(req.rawBody);  
+// });
 
 server.listen(port, () => {
   console.log(`The server is listening on port ${port}`)
