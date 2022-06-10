@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
 const letterSchema = new Schema({
-  text:  String
+  words:  String
 });
 
 const Letter = mongoose.model('Letter', letterSchema);

@@ -1,8 +1,13 @@
 const express = require('express');
-const Letter = require('./model/letter');
+const upload = require('express-fileupload');
+const http = require('http');
+const fs = require('fs');
 
 const app = express();
+const server = http.createServer(app);
 const port = 5000;
+
+let filename;
 
 const parseRawBody = (req, res, next) => {
   req.setEncoding('utf8');
@@ -20,7 +25,8 @@ app.engine("html", require("ejs").renderFile);
 
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
-app.use(parseRawBody);
+app.use(upload());
+// app.use(parseRawBody);
 
 function isJson(str) {
   try {
@@ -31,11 +37,78 @@ function isJson(str) {
   return true;
 }
 
+function jsonReader(filePath, cb){
+  fs.readFile(filePath, 'utf-8', (err, fileData) => {
+      if (err){
+          return cb && cb(err);
+      }
+
+      try {
+          const object = JSON.parse(fileData)
+          return cb && cb(null, object);
+      } catch (error) {
+          return cb && cb(err);
+      }
+  })
+}
+
+function done(filePath){
+  jsonReader(filePath, (err, data) => {
+      if (err){
+          console.log(err);
+      } else {
+          console.log(data);
+      }
+  })
+}
+
 app.get("/home", (req, res) => {
   res.render("landing");
+});
+
+app.get("/show", (req, res) => {
+  res.render("showupload");
+});
+
+app.post("/show", async (req, res) => {
+  if(req.files) {
+    console.log(req.files);
+
+    let file = req.files.file;
+    filename = file.name;
+    
+    await file.mv('./uploads/' + filename, function (err){
+            if (err) {
+              res.send(err);
+            } else {
+              // res.send("Fileupload");
+            }
+          })
+
+    res.redirect("/convert");
+  } else {
+    res.send("No file was found");
+  }
+})
+
+app.get('/convert', (req, res) => {
+  res.render('convert');
+})
+
+app.post("/convert", (req, res) => {
+  
+    jsonReader(`./uploads + ${filename}`, (err, data) => {
+      if (err){
+          console.log(err);
+      } else {
+          console.log(data);
+          res.send(data);
+      }
+    })
 })
 
 app.post('/test', (req, res) => {  
+  console.log(req.rawBody.words);
   let check = isJson(req.rawBody);  
 
   if (!check) return res.status(400).send("Bad request");
@@ -44,7 +117,7 @@ app.post('/test', (req, res) => {
   res.send(req.rawBody);  
 });
 
-app.listen(port, () => {
+server.listen(port, () => {
   console.log(`The server is listening on port ${port}`)
 })
 
