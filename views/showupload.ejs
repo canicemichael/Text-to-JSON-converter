@@ -10,7 +10,7 @@
 <body>
     <div class="container-lg">
         <div>
-            <h2>Upload a file containing strings to be converted to json</h2>
+            <h2>Upload a file and copy its name</h2>
             <form action="/show" method="POST" enctype="multipart/form-data">
                 <input type="file" name="file" id="fileInput" multiple onchange="showname()" required/>
                 <input class="btn btn-primary" type="submit" value="Upload" />
@@ -22,7 +22,7 @@
             // copy the name of file
             let name = document.getElementById('fileInput');
             navigator.clipboard.writeText(name.files.item(0).name);
-            alert('Selected file: ' + name.files.item(0).name);
+            // alert('Selected file: ' + name.files.item(0).name);
         }
     </script>
 </body>
