@@ -6,3 +6,4 @@ if the strings can not be in a JSON format it will throw an error
 
 clone the repo ``git clone``
 install all neccessary dependencies ``npm install``
+start the server ``npm start``
