@@ -63,6 +63,7 @@ app.post("/show", (req, res) => {
 
   let file = req.files.file;
   let filename = file.name;
+  console.log(filename);
   
   file.mv('./uploads/' + filename, function (err){
     if (err) {
@@ -72,8 +73,21 @@ app.post("/show", (req, res) => {
     }
   })
     
-  res.redirect("/paste");  
+  res.redirect("/paste");
 });
+
+app.post('/convert', (req, res) => {
+  let dataa;
+  jsonReader('./uploads/' + req.body.pasteName, (err, data) => {
+    if (err){
+        console.log(err);
+    } else {
+      dataa = data;
+        console.log(data);
+        res.send(dataa);
+    }
+  })
+})
 
 server.listen(port, () => {
   console.log(`The server is listening on port ${port}`)
